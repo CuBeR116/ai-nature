@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Service;
 
+use Exception;
 use Phpml\Estimator;
 use App\Enum\ML as MLEnum;
 use App\Mutator\ArrayMutator;
@@ -22,6 +23,7 @@ class ML
      *
      * @param int $tries
      *
+     * @throws Exception
      * @return void
      */
     public function train(int $tries = 100): void
@@ -30,8 +32,22 @@ class ML
             $values = MLEnum::EMPTY_DATA;
 
             //Случайным образом распределяем животных
-            $values = $this->randomValues($values, 1, 3);
-            $values = $this->randomValues($values, 2, 3);
+            $sum = 0;
+            while ($sum <= 6) {
+                foreach ($values as &$value) {
+                    if ($value[2] === 1) {
+                        continue;
+                    }
+                    $rand = random_int(0, 1);
+                    $value[2] = $rand;
+                    $sum += $rand;
+
+                    if ($sum === 6) {
+                        break 2;
+                    }
+                }
+            }
+            unset($value);
 
             $group = [];
             foreach ($values as $value) {
@@ -80,26 +96,6 @@ class ML
     public function getClassifier(): Estimator
     {
         return $this->classifier;
-    }
-
-    private function randomValues(array $values, int $compareValue, int $max): array
-    {
-        $keys = array_keys($this->shuffleAssoc($values));
-        foreach ($keys as $key) {
-            if ($values[$key][1] !== $compareValue) {
-                continue;
-            }
-            while (($value = $max - rand(0, 2)) !== 0) {
-                if ($value < 0 || $value === 3) {
-                    continue;
-                }
-                $values[$key][2] = $value;
-                $max -= $value;
-                break;
-            }
-        }
-
-        return $values;
     }
 
     private function shuffleAssoc($list): array

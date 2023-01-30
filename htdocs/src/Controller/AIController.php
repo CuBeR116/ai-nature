@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Exception;
 use Phpml\Exception\FileException;
 use App\Repository\ML as MLRepository;
 use App\Service\ML as MLService;
@@ -30,6 +31,7 @@ class AIController extends AbstractController
     /**
      * @throws SerializeException
      * @throws FileException
+     * @throws Exception
      */
     #[Route("/ai/train", methods: ['GET'])]
     public function train(MLRepository $ml): Response
@@ -38,7 +40,7 @@ class AIController extends AbstractController
         $classifier = $ml->get();
 
         $train = new MLService($classifier);
-        $train->train();
+        $train->train(50);
         $ml->save();
 
         return $this->json(['result' => 'success']);
