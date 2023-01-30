@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Mutator\ArrayMutator;
 use Phpml\Exception\FileException;
 use App\Repository\ML as MLRepository;
 use App\Service\ML as MLService;
@@ -14,39 +13,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AIController extends AbstractController
 {
-    private const TEST1 = [
-        [1, 2],
-        [2, 1],
-        [2, 0],
-        [2, 2],
-        [1, 0],
-        [1, 1],
-    ];
-    private const TEST2 = [
-        [1, 0],
-        [2, 0],
-        [2, 2],
-        [2, 1],
-        [1, 2],
-        [1, 1],
-    ];
-    private const TEST3 = [
-        [1, 1],
-        [2, 0],
-        [2, 1],
-        [2, 2],
-        [1, 0],
-        [1, 2],
-    ];
-    private const TEST4 = [
-        [1, 0],
-        [2, 2],
-        [2, 0],
-        [2, 1],
-        [1, 2],
-        [1, 1],
-    ];
-
     /**
      * @throws SerializeException
      */
@@ -55,9 +21,10 @@ class AIController extends AbstractController
     {
         $ml->load();
         $classifier = $ml->get();
-        $result = $classifier->predict(ArrayMutator::getAllArrayValues($request->get('values')));
+        $values = $request->get('values');
+        $predict = $classifier->predict($values);
 
-        return $this->json(['result' => $result]);
+        return $this->json(['result' => $predict]);
     }
 
     /**

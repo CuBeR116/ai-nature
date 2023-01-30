@@ -10,14 +10,17 @@ use App\Enum\ML as MLEnum;
 use Phpml\Exception\FileException;
 use Phpml\Exception\SerializeException;
 use Phpml\Classification\KNearestNeighbors;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class ML
 {
     private Estimator $classifier;
     private ModelManager $modelManager;
+    private string $rootPath;
 
-    public function __construct()
+    public function __construct(KernelInterface $kernel)
     {
+        $this->rootPath = $kernel->getProjectDir() . '/public/upload';
         $this->modelManager = new ModelManager();
     }
 
@@ -27,7 +30,7 @@ class ML
      */
     public function save(): void
     {
-        $this->modelManager->saveToFile($this->classifier, MLEnum::SAVE_DIR);
+        $this->modelManager->saveToFile($this->classifier, $this->rootPath . MLEnum::SAVE_DIR);
     }
 
     /**
@@ -36,7 +39,7 @@ class ML
     public function load():void
     {
         try {
-            $this->classifier = $this->modelManager->restoreFromFile(MLEnum::SAVE_DIR);
+            $this->classifier = $this->modelManager->restoreFromFile($this->rootPath . MLEnum::SAVE_DIR);
         } catch (FileException $e) {
             $this->classifier = new KNearestNeighbors();
         }

@@ -17,10 +17,19 @@ class ML
         $this->classifier = $classifier;
     }
 
-    public function train(int $tries = 500): void
+    /**
+     * Происходит обучение нейронки
+     *
+     * @param int $tries
+     *
+     * @return void
+     */
+    public function train(int $tries = 100): void
     {
         for ($i = 1; $i <= $tries; $i++) {
             $values = MLEnum::EMPTY_DATA;
+
+            //Случайным образом распределяем животных
             $values = $this->randomValues($values, 1, 3);
             $values = $this->randomValues($values, 2, 3);
 
@@ -63,7 +72,7 @@ class ML
                 }
             }
 
-            $values = ArrayMutator::getAllArrayValues($group, [0]);
+            $values = ArrayMutator::getAllArrayValues($group, [2]);
             $this->classifier->train([$values], [$result]);
         }
     }

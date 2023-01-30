@@ -1,6 +1,6 @@
 FROM --platform=linux/amd64 linux/amd64
 
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
 RUN apt update \
     && apt install -y zlib1g-dev g++ git libicu-dev zip libzip-dev libpq-dev libmagickwand-dev imagemagick \
@@ -26,4 +26,4 @@ RUN curl -sS https://get.symfony.com/cli/installer | bash
 
 #CMD bash -c "composer install"
 
-RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+#RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
